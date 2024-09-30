@@ -18,7 +18,7 @@
         img {
             display: block;
             margin: 20px auto;
-            width: 40%; /* Reduzido em 60% */
+            width: 40%; /* Reduzido para 40% do tamanho original */
             height: auto;
         }
 
@@ -47,18 +47,6 @@
             color: #155724;
         }
 
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
@@ -70,7 +58,8 @@
             <tr>
                 <th>Nome (PIX)</th>
                 <th>Ingressos Escape (Pagar a Felipe)</th>
-                <th>Ingressos Fuga (Pagar a João/Sopelsa)</th>
+                <th>Ingressos Fuga (Pagar a João)</th>
+                <th>Ingressos Fuga (Pagar a Sopelsa)</th>
                 <th>Van (Pagar a Jhonny)</th>
                 <th>Cerveja (Pagar a Vini)</th>
                 <th>Mercado Extra Jhonny (Pagar a Jhonny)</th>
@@ -84,15 +73,15 @@
     <script>
         // Dados de despesas
         const despesas = [
-            { nome: 'João', pix: '00987068024', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Leo', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Sopelsa', pix: '02745921002', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Felipe', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Vini', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Cristiano', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Thiago', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Dudu', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Jhonny', pix: '00778207030', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 0.00, mercado_jhonny: 35.00 }
+            { nome: 'João', pix: '00987068024', escape: 76.66, fuga_joao: 48.90, fuga_sopelsa: 0, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Leo', pix: 'N/A', escape: 76.66, fuga_joao: 48.90, fuga_sopelsa: 0, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Sopelsa', pix: '02745921002', escape: 76.66, fuga_joao: 0, fuga_sopelsa: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Felipe', pix: 'N/A', escape: 76.66, fuga_joao: 48.90, fuga_sopelsa: 0, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Vini', pix: 'N/A', escape: 76.66, fuga_joao: 48.90, fuga_sopelsa: 0, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Cristiano', pix: 'N/A', escape: 76.66, fuga_joao: 0, fuga_sopelsa: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Thiago', pix: 'N/A', escape: 76.66, fuga_joao: 0, fuga_sopelsa: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Dudu', pix: 'N/A', escape: 76.66, fuga_joao: 0, fuga_sopelsa: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Jhonny', pix: '00778207030', escape: 0, fuga_joao: 0, fuga_sopelsa: 0, van: 0, cerveja_vini: 0.00, mercado_jhonny: 0 }
         ];
 
         // Função para formatar como moeda
@@ -105,7 +94,7 @@
             const tabelaBody = document.querySelector('#tabela-despesas tbody');
             tabelaBody.innerHTML = '';
 
-            despesas.forEach((despesa, index) => {
+            despesas.forEach((despesa) => {
                 const row = document.createElement('tr');
 
                 // Adiciona o nome e a chave PIX
@@ -113,27 +102,16 @@
                 nomeTd.textContent = `${despesa.nome} (PIX: ${despesa.pix})`;
                 row.appendChild(nomeTd);
 
-                // Adiciona as despesas e os botões
-                ['escape', 'fuga', 'van', 'cerveja_vini', 'mercado_jhonny'].forEach(categoria => {
+                // Adiciona as despesas e suas categorias, separadas para João e Sopelsa
+                ['escape', 'fuga_joao', 'fuga_sopelsa', 'van', 'cerveja_vini', 'mercado_jhonny'].forEach(categoria => {
                     const td = document.createElement('td');
                     td.className = despesa[categoria] === 0 ? 'pago' : 'nao-pago';
-                    td.innerHTML = `
-                        ${formatCurrency(despesa[categoria])}
-                        ${despesa[categoria] > 0 ? `<button onclick="marcarComoPago(${index}, '${categoria}')">Marcar como pago</button>` : ''}
-                    `;
+                    td.textContent = formatCurrency(despesa[categoria]);
                     row.appendChild(td);
                 });
 
                 tabelaBody.appendChild(row);
             });
-        }
-
-        // Função para marcar como pago
-        function marcarComoPago(index, categoria) {
-            if (confirm('Deseja marcar como pago?')) {
-                despesas[index][categoria] = 0;
-                preencherTabela(); // Atualiza a tabela
-            }
         }
 
         // Preenche a tabela inicialmente
