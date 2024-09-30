@@ -18,7 +18,7 @@
         img {
             display: block;
             margin: 20px auto;
-            width: 50%;
+            width: 40%; /* Reduzido em 60% */
             height: auto;
         }
 
@@ -60,40 +60,27 @@
             background-color: #0056b3;
         }
     </style>
-</head>
-<body>
-    <h1>DESPEDIDA DE SOLTEIRO DO TXINOR</h1>
-    <img src="Images/destaque 1.jpeg" alt="Destaque da Despedida">
-
-    <table id="tabela-despesas">
-        <thead>
-            <tr>
-                <th>Nome (PIX)</th>
-                <th>Ingressos Escape (Pagar a Felipe)</th>
-                <th>Ingressos Fuga (Pagar a João/Sopelsa)</th>
-                <th>Van (Pagar a Jhonny)</th>
-                <th>Cerveja (Pagar a Vini)</th>
-                <th>Mercado Extra Jhonny (Pagar a Jhonny)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- As linhas serão preenchidas com JavaScript -->
-        </tbody>
-    </table>
-
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <script>
-        // Dados de despesas
-        const despesas = [
-            { nome: 'João', pix: '00987068024', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Leo', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Sopelsa', pix: '02745921002', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Felipe', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Vini', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Cristiano', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Thiago', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Dudu', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
-            { nome: 'Jhonny', pix: '00778207030', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 0.00, mercado_jhonny: 35.00 }
-        ];
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_DOMINIO.firebaseapp.com",
+            databaseURL: "https://SEU_BANCO_DE_DADOS.firebaseio.com",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET.appspot.com",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializa o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Dados de despesas no Firebase
+        const despesasRef = db.ref('despesas');
 
         // Função para formatar como moeda
         function formatCurrency(value) {
@@ -101,7 +88,7 @@
         }
 
         // Função para preencher a tabela
-        function preencherTabela() {
+        function preencherTabela(despesas) {
             const tabelaBody = document.querySelector('#tabela-despesas tbody');
             tabelaBody.innerHTML = '';
 
@@ -131,13 +118,35 @@
         // Função para marcar como pago
         function marcarComoPago(index, categoria) {
             if (confirm('Deseja marcar como pago?')) {
-                despesas[index][categoria] = 0;
-                preencherTabela(); // Atualiza a tabela
+                despesasRef.child(index).child(categoria).set(0);  // Atualiza no Firebase
             }
         }
 
-        // Preenche a tabela inicialmente
-        preencherTabela();
+        // Carrega as despesas do Firebase e preenche a tabela
+        despesasRef.on('value', snapshot => {
+            const despesas = snapshot.val();
+            preencherTabela(despesas);
+        });
     </script>
+</head>
+<body>
+    <h1>DESPEDIDA DE SOLTEIRO DO TXINOR</h1>
+    <img src="Images/destaque 1.jpeg" alt="Destaque da Despedida">
+
+    <table id="tabela-despesas">
+        <thead>
+            <tr>
+                <th>Nome (PIX)</th>
+                <th>Ingressos Escape (Pagar a Felipe)</th>
+                <th>Ingressos Fuga (Pagar a João/Sopelsa)</th>
+                <th>Van (Pagar a Jhonny)</th>
+                <th>Cerveja (Pagar a Vini)</th>
+                <th>Mercado Extra Jhonny (Pagar a Jhonny)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- As linhas serão preenchidas com Firebase -->
+        </tbody>
+    </table>
 </body>
 </html>
