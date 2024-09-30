@@ -1,31 +1,3 @@
-<?php
-// Lista de despesas com chaves PIX
-$despesas = [
-    'João' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => '00987068024'],
-    'Leo' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => ''],
-    'Sopelsa' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => '02745921002'],
-    'Felipe' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => ''],
-    'Vini' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => ''],
-    'Cristiano' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => ''],
-    'Thiago' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => ''],
-    'Dudu' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 29.25, 'mercado_jhonny' => 35.00, 'pix' => ''],
-    'Jhonny' => ['escape' => 76.66, 'fuga' => 48.90, 'van' => 111.11, 'cerveja_vini' => 0.00, 'mercado_jhonny' => 35.00, 'pix' => '00778207030']
-];
-
-// Função para formatar o valor como moeda
-function formatCurrency($value) {
-    return 'R$ ' . number_format($value, 2, ',', '.');
-}
-
-// Verifica se algum pagamento foi marcado como pago
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome = $_POST['nome'];
-    $categoria = $_POST['categoria'];
-    $despesas[$nome][$categoria] = 0;  // Simula o pagamento ao zerar o valor
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -93,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <h1>DESPEDIDA DE SOLTEIRO DO TXINOR</h1>
     <img src="Images/destaque 1.jpg" alt="Destaque da Despedida">
 
-    <table>
+    <table id="tabela-despesas">
         <thead>
             <tr>
                 <th>Nome (PIX)</th>
@@ -105,24 +77,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($despesas as $nome => $gastos): ?>
-                <tr>
-                    <td><?= $nome ?> (PIX: <?= $gastos['pix'] ?: 'N/A' ?>)</td>
-                    <?php foreach (['escape', 'fuga', 'van', 'cerveja_vini', 'mercado_jhonny'] as $categoria): ?>
-                        <td class="<?= $gastos[$categoria] == 0 ? 'pago' : 'nao-pago' ?>">
-                            <?= formatCurrency($gastos[$categoria]) ?>
-                            <?php if ($gastos[$categoria] > 0): ?>
-                                <form method="POST" style="display:inline;">
-                                    <input type="hidden" name="nome" value="<?= $nome ?>">
-                                    <input type="hidden" name="categoria" value="<?= $categoria ?>">
-                                    <button type="submit">Marcar como pago</button>
-                                </form>
-                            <?php endif; ?>
-                        </td>
-                    <?php endforeach; ?>
-                </tr>
-            <?php endforeach; ?>
+            <!-- As linhas serão preenchidas com JavaScript -->
         </tbody>
     </table>
+
+    <script>
+        // Dados de despesas
+        const despesas = [
+            { nome: 'João', pix: '00987068024', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Leo', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Sopelsa', pix: '02745921002', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Felipe', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Vini', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Cristiano', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Thiago', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Dudu', pix: 'N/A', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 29.25, mercado_jhonny: 35.00 },
+            { nome: 'Jhonny', pix: '00778207030', escape: 76.66, fuga: 48.90, van: 111.11, cerveja_vini: 0.00, mercado_jhonny: 35.00 }
+        ];
+
+        // Função para formatar como moeda
+        function formatCurrency(value) {
+            return 'R$ ' + value.toFixed(2).replace('.', ',');
+        }
+
+        // Função para preencher a tabela
+        function preencherTabela() {
+            const tabelaBody = document.querySelector('#tabela-despesas tbody');
+            tabelaBody.innerHTML = '';
+
+            despesas.forEach((despesa, index) => {
+                const row = document.createElement('tr');
+
+                // Adiciona o nome e a chave PIX
+                const nomeTd = document.createElement('td');
+                nomeTd.textContent = `${despesa.nome} (PIX: ${despesa.pix})`;
+                row.appendChild(nomeTd);
+
+                // Adiciona as despesas e os botões
+                ['escape', 'fuga', 'van', 'cerveja_vini', 'mercado_jhonny'].forEach(categoria => {
+                    const td = document.createElement('td');
+                    td.className = despesa[categoria] === 0 ? 'pago' : 'nao-pago';
+                    td.innerHTML = `
+                        ${formatCurrency(despesa[categoria])}
+                        ${despesa[categoria] > 0 ? `<button onclick="marcarComoPago(${index}, '${categoria}')">Marcar como pago</button>` : ''}
+                    `;
+                    row.appendChild(td);
+                });
+
+                tabelaBody.appendChild(row);
+            });
+        }
+
+        // Função para marcar como pago
+        function marcarComoPago(index, categoria) {
+            if (confirm('Deseja marcar como pago?')) {
+                despesas[index][categoria] = 0;
+                preencherTabela(); // Atualiza a tabela
+            }
+        }
+
+        // Preenche a tabela inicialmente
+        preencherTabela();
+    </script>
 </body>
 </html>
